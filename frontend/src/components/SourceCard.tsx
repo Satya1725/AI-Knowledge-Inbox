@@ -8,15 +8,15 @@ interface SourceCardProps {
   highlighted: boolean;
 }
 
-const SNIPPET_PREVIEW_CHARS = 260;
+// Roughly 3 lines at this width; shorter snippets don't need a "Show more" toggle.
+const LONG_SNIPPET_CHARS = 240;
 
 export function SourceCard({ source, highlighted }: SourceCardProps) {
   const [expanded, setExpanded] = useState(false);
   const isUrl = source.source_type === "url";
   const Icon = isUrl ? Link2 : StickyNote;
   const relevance = Math.round(Math.max(0, Math.min(1, source.score)) * 100);
-  const isLong = source.snippet.length > SNIPPET_PREVIEW_CHARS;
-  const snippet = expanded || !isLong ? source.snippet : `${source.snippet.slice(0, SNIPPET_PREVIEW_CHARS).trimEnd()}…`;
+  const isLong = source.snippet.length > LONG_SNIPPET_CHARS;
 
   return (
     <li
@@ -56,7 +56,13 @@ export function SourceCard({ source, highlighted }: SourceCardProps) {
             {!source.cited && <span className="text-[11px] text-slate-400">not cited</span>}
           </div>
 
-          <p className="mt-2 whitespace-pre-line text-[13px] leading-relaxed text-slate-600">{snippet}</p>
+          <blockquote
+            className={`mt-2 border-l-2 border-slate-200 pl-3 text-[13px] leading-relaxed text-slate-600 ${
+              expanded ? "" : "line-clamp-3"
+            }`}
+          >
+            {source.snippet}
+          </blockquote>
           {isLong && (
             <button
               onClick={() => setExpanded((v) => !v)}

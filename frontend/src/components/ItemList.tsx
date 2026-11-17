@@ -11,9 +11,10 @@ interface ItemListProps {
   loading: boolean;
   error: string | null;
   onDelete: (id: string) => Promise<void>;
+  onReindex: (item: Item) => void;
 }
 
-export function ItemList({ items, loading, error, onDelete }: ItemListProps) {
+export function ItemList({ items, loading, error, onDelete, onReindex }: ItemListProps) {
   const [filter, setFilter] = useState("");
 
   const visibleItems = useMemo(() => {
@@ -87,6 +88,7 @@ export function ItemList({ items, loading, error, onDelete }: ItemListProps) {
               key={item.id}
               item={item}
               onRequestDelete={requestDelete}
+              onReindex={onReindex}
               deleting={deleting && pendingDelete?.id === item.id}
             />
           ))}

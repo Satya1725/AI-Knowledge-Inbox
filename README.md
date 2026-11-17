@@ -98,6 +98,7 @@ If nothing relevant is found, the API says so and skips the LLM call.
 | POST | `/ingest` | Save a note `{type:"note", text}` or a URL `{type:"url", url}` |
 | GET | `/items` | List saved items |
 | DELETE | `/items/{id}` | Delete an item |
+| POST | `/items/{id}/reindex` | Re-fetch and re-index an item (also retries a failed one) |
 | POST | `/query` | Ask a question `{question, provider?}` and get an answer with sources |
 | GET | `/providers` | List which AI providers are configured |
 

@@ -31,7 +31,7 @@ export default function App() {
     [toast],
   );
 
-  const { items, loading, error, addItem, removeItem } = useItems({ onItemSettled: handleItemSettled });
+  const { items, loading, error, addItem, removeItem, reindexItem } = useItems({ onItemSettled: handleItemSettled });
   const providers = useProviders();
   const readyItemCount = items.filter((item) => item.status === "ready").length;
 
@@ -61,6 +61,21 @@ export default function App() {
     [items, removeItem, toast],
   );
 
+  const handleReindex = useCallback(
+    async (item: Item) => {
+      try {
+        await reindexItem(item.id);
+        toast.info(
+          `Re-indexing "${displayName(item)}"`,
+          item.source_type === "url" ? "Fetching the latest version of the page…" : "Rebuilding its chunks…",
+        );
+      } catch (err) {
+        toast.error("Couldn't re-index item", errorMessage(err));
+      }
+    },
+    [reindexItem, toast],
+  );
+
   return (
     // On large screens the app fills exactly one viewport: the page itself never scrolls,
     // only the Library list and the answer area do. On small screens it falls back to normal page scroll.
@@ -72,7 +87,7 @@ export default function App() {
       <main className="relative mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 pb-6 sm:px-6 lg:min-h-0 lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)]">
         <div className="scroll-thin flex flex-col gap-6 lg:-mr-2 lg:min-h-0 lg:overflow-y-auto lg:pr-2">
           <AddItemForm onAdd={handleAdd} />
-          <ItemList items={items} loading={loading} error={error} onDelete={handleDelete} />
+          <ItemList items={items} loading={loading} error={error} onDelete={handleDelete} onReindex={handleReindex} />
         </div>
 
         <AskPanel providers={providers} readyItemCount={readyItemCount} />

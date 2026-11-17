@@ -68,6 +68,14 @@ def save_fetched_content(item_id: str, title: str | None, raw_content: str) -> N
         )
 
 
+def mark_processing(item_id: str) -> None:
+    with connect() as conn:
+        conn.execute(
+            "UPDATE items SET status = 'processing', error = NULL, updated_at = ? WHERE id = ?",
+            (_now(), item_id),
+        )
+
+
 def mark_ready(item_id: str) -> None:
     with connect() as conn:
         conn.execute(

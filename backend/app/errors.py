@@ -19,6 +19,11 @@ class NotFoundError(AppError):
     code = "not_found"
 
 
+class ConflictError(AppError):
+    status_code = 409
+    code = "conflict"
+
+
 class FetchError(AppError):
     """The URL could not be downloaded or had no usable content."""
 

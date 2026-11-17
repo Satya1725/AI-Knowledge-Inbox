@@ -27,6 +27,13 @@ NO_CONTENT_ANSWER = (
 )
 
 _CITATION = re.compile(r"\[(\d+)\]")
+_SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([.,;:!?)\]])")
+
+
+def clean_snippet(text: str) -> str:
+    """One readable paragraph for display: no stray newlines, no 'word .' gaps."""
+    text = " ".join(text.split())
+    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", text)
 
 
 def build_user_prompt(question: str, chunks: list[RetrievedChunk]) -> str:
@@ -70,7 +77,7 @@ async def answer_question(question: str, top_k: int | None, provider_name: Provi
             title=chunk.title,
             source_type=chunk.source_type,
             url=chunk.url,
-            snippet=chunk.text,
+            snippet=clean_snippet(chunk.text),
             score=chunk.score,
             cited=i in cited,
         )

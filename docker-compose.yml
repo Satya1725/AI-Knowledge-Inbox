@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./backend
+    env_file: ./backend/.env          # OPENAI_API_KEY and/or GEMINI_API_KEY
+    environment:
+      DATABASE_PATH: /data/inbox.db
+    volumes:
+      - inbox-data:/data               # SQLite survives container restarts
+    ports:
+      - "8000:8000"                    # optional: direct API access / Swagger at /docs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"                      # open http://localhost:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  inbox-data:

@@ -6,17 +6,21 @@ interface CardProps {
   icon?: ReactNode;
   action?: ReactNode;
   className?: string;
+  /** Extra classes for the body, e.g. to make it a flex column with an inner scroll area. */
+  bodyClassName?: string;
   children: ReactNode;
 }
 
-export function Card({ title, subtitle, icon, action, className = "", children }: CardProps) {
+export function Card({ title, subtitle, icon, action, className = "", bodyClassName = "", children }: CardProps) {
   return (
-    <section className={`rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/50 ${className}`}>
+    <section
+      className={`flex flex-col rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/50 ${className}`}
+    >
       {title && (
-        <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
           <div className="flex items-center gap-3">
             {icon && (
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
                 {icon}
               </span>
             )}
@@ -28,7 +32,7 @@ export function Card({ title, subtitle, icon, action, className = "", children }
           {action}
         </header>
       )}
-      <div className="p-5">{children}</div>
+      <div className={`min-h-0 flex-1 p-5 ${bodyClassName}`}>{children}</div>
     </section>
   );
 }

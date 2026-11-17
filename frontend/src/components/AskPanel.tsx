@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowUp, Loader2, MessageSquareText } from "lucide-react";
 import type { ProviderName, ProvidersInfo } from "../api/types";
 import { useAsk } from "../hooks/useAsk";
@@ -23,6 +23,12 @@ export function AskPanel({ providers, readyItemCount }: AskPanelProps) {
   const [draft, setDraft] = useState("");
   const [provider, setProvider] = useState<ProviderName | undefined>(undefined);
   const { question, result, loading, error, ask } = useAsk();
+  const responseRef = useRef<HTMLDivElement>(null);
+
+  // A new question starts at the top of the response area, not wherever the last answer was scrolled to.
+  useEffect(() => {
+    if (loading) responseRef.current?.scrollTo({ top: 0 });
+  }, [loading]);
 
   useEffect(() => {
     if (providers && !provider) setProvider(providers.default_chat_provider);
@@ -66,9 +72,10 @@ export function AskPanel({ providers, readyItemCount }: AskPanelProps) {
       subtitle="Answers come only from what you've saved"
       icon={<MessageSquareText className="h-4 w-4" />}
       action={providerSwitch}
-      className="lg:sticky lg:top-6 lg:self-start"
+      className="lg:min-h-0"
+      bodyClassName="flex flex-col"
     >
-      <form onSubmit={handleSubmit} className="relative">
+      <form onSubmit={handleSubmit} className="relative shrink-0">
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -81,20 +88,21 @@ export function AskPanel({ providers, readyItemCount }: AskPanelProps) {
           placeholder="Ask a question about your notes and links…"
           rows={2}
           maxLength={1000}
-          className="w-full resize-none rounded-xl border border-slate-200 bg-white py-3 pl-4 pr-14 text-[15px] text-slate-800 shadow-sm placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-4 focus:ring-violet-100"
+          className="w-full resize-none rounded-xl border border-slate-200 bg-white py-3 pl-4 pr-14 text-[15px] text-slate-800 shadow-sm placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-100"
         />
         <button
           type="submit"
           disabled={!canAsk}
-          className="absolute bottom-3.5 right-3 flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-violet-500 to-indigo-600 text-white shadow-md shadow-violet-500/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none"
+          className="absolute bottom-3.5 right-3 flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none"
           aria-label="Ask"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
         </button>
       </form>
-      <p className="mt-1.5 text-[11px] text-slate-400">Enter to ask · Shift+Enter for a new line</p>
+      <p className="mt-1.5 shrink-0 text-[11px] text-slate-400">Enter to ask · Shift+Enter for a new line</p>
 
-      <div className="mt-6">
+      {/* Only this area scrolls; the question box above stays in place. */}
+      <div ref={responseRef} className="scroll-thin -mr-2 mt-5 min-h-0 flex-1 overflow-y-auto pr-2">
         {error && <ErrorBanner message={error} />}
 
         {loading && <AnswerSkeleton providerLabel={provider ? PROVIDER_LABELS[provider] : "AI"} />}
@@ -122,10 +130,10 @@ function AnswerSkeleton({ providerLabel }: { providerLabel: string }) {
   }, [steps.length]);
 
   return (
-    <div className="animate-fade-in rounded-xl border border-violet-100 bg-linear-to-b from-violet-50/60 to-white p-5">
+    <div className="animate-fade-in rounded-xl border border-emerald-100 bg-linear-to-b from-emerald-50/60 to-white p-5">
       <div className="flex items-center gap-3">
         <LoadingDots />
-        <span key={step} className="animate-fade-in text-sm font-medium text-violet-700">
+        <span key={step} className="animate-fade-in text-sm font-medium text-emerald-700">
           {steps[step]}…
         </span>
       </div>
@@ -134,7 +142,7 @@ function AnswerSkeleton({ providerLabel }: { providerLabel: string }) {
         {steps.map((label, i) => (
           <li
             key={label}
-            className={`h-1 flex-1 rounded-full transition-colors duration-500 ${i <= step ? "bg-violet-500" : "bg-violet-100"}`}
+            className={`h-1 flex-1 rounded-full transition-colors duration-500 ${i <= step ? "bg-emerald-500" : "bg-emerald-100"}`}
           />
         ))}
       </ol>
@@ -169,7 +177,7 @@ function EmptyState({ readyItemCount, onPick }: { readyItemCount: number; onPick
           <button
             key={q}
             onClick={() => onPick(q)}
-            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition hover:border-violet-300 hover:text-violet-700"
+            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
           >
             {q}
           </button>

@@ -33,13 +33,13 @@ export function ItemCard({ item, deleting, onRequestDelete }: ItemCardProps) {
 
   return (
     <li
-      className={`group relative animate-fade-in overflow-hidden rounded-xl border bg-white p-3.5 transition hover:border-violet-200 hover:shadow-sm ${
-        item.status === "processing" ? "border-violet-200" : "border-slate-200"
+      className={`group relative animate-fade-in overflow-hidden rounded-xl border bg-white p-3.5 transition hover:border-emerald-200 hover:shadow-sm ${
+        item.status === "processing" ? "border-emerald-200" : "border-slate-200"
       } ${deleting ? "pointer-events-none opacity-50" : ""}`}
     >
       {item.status === "processing" && (
-        <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden bg-violet-100">
-          <div className="h-full w-1/3 animate-indeterminate rounded-full bg-linear-to-r from-violet-500 to-indigo-500" />
+        <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden bg-emerald-100">
+          <div className="h-full w-1/3 animate-indeterminate rounded-full bg-linear-to-r from-emerald-500 to-teal-500" />
         </div>
       )}
 
@@ -83,7 +83,7 @@ export function ItemCard({ item, deleting, onRequestDelete }: ItemCardProps) {
             <StatusBadge status={item.status} />
             <span>{timeAgo(item.created_at)}</span>
             {item.status === "processing" && (
-              <span className="text-violet-500">{isUrl ? "Fetching page & embedding…" : "Embedding…"}</span>
+              <span className="text-emerald-500">{isUrl ? "Fetching page & embedding…" : "Embedding…"}</span>
             )}
             {item.status === "ready" && (
               <>

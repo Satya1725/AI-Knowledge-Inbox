@@ -15,7 +15,7 @@ const MODES: { value: Mode; label: string; icon: typeof StickyNote }[] = [
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 " +
-  "focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 transition";
+  "focus:border-emerald-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100 transition";
 
 interface AddItemFormProps {
   onAdd: (payload: IngestPayload) => Promise<void>;

@@ -29,9 +29,9 @@ export function AnswerView({ question, result }: AnswerViewProps) {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <div className="rounded-xl border border-violet-100 bg-linear-to-b from-violet-50/70 to-white p-5">
+      <div className="rounded-xl border border-emerald-100 bg-linear-to-b from-emerald-50/70 to-white p-5">
         <div className="mb-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-violet-600">
+          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-emerald-600">
             <Sparkles className="h-3.5 w-3.5" />
             Answer
           </div>

@@ -4,7 +4,7 @@ import type { Toast, ToastKind } from "./toastContext";
 const STYLES: Record<ToastKind, { icon: typeof Info; iconClass: string; barClass: string }> = {
   success: { icon: CheckCircle2, iconClass: "text-emerald-500", barClass: "bg-emerald-500" },
   error: { icon: XCircle, iconClass: "text-red-500", barClass: "bg-red-500" },
-  info: { icon: Info, iconClass: "text-violet-500", barClass: "bg-violet-500" },
+  info: { icon: Info, iconClass: "text-sky-500", barClass: "bg-sky-500" },
 };
 
 interface ToastViewportProps {
@@ -31,7 +31,7 @@ export function ToastViewport({ toasts, onDismiss }: ToastViewportProps) {
               <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${iconClass}`} />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-slate-900">{toast.title}</p>
-                {toast.message && <p className="mt-0.5 break-words text-[13px] text-slate-500">{toast.message}</p>}
+                {toast.message && <p className="mt-0.5 wrap-break-word text-[13px] text-slate-500">{toast.message}</p>}
               </div>
               <button
                 onClick={() => onDismiss(toast.id)}

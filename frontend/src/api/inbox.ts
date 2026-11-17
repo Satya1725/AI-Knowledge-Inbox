@@ -8,6 +8,8 @@ export const inboxApi = {
 
   deleteItem: (id: string) => request<void>(`/items/${id}`, { method: "DELETE" }),
 
+  reindexItem: (id: string) => request<Item>(`/items/${id}/reindex`, { method: "POST" }),
+
   query: (payload: QueryPayload) => request<QueryResponse>("/query", { method: "POST", body: payload }),
 
   providers: () => request<ProvidersInfo>("/providers"),

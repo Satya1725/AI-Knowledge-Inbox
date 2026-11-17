@@ -52,6 +52,26 @@ def test_validation_errors_have_clear_messages(client):
     assert client.post("/query", json={"question": ""}).status_code == 422
 
 
+def test_reindex_item(client):
+    item = _ingest_note(client, "A note that will be indexed twice.")
+    response = client.post(f"/items/{item['id']}/reindex")
+    assert response.status_code == 202
+    assert response.json()["status"] == "processing"
+
+    # background task has run by now
+    refreshed = client.get(f"/items/{item['id']}").json()
+    assert refreshed["status"] == "ready"
+    assert refreshed["chunk_count"] == 1
+
+    assert client.post("/items/does-not-exist/reindex").status_code == 404
+
+
+def test_source_snippets_are_clean_single_paragraphs(client):
+    _ingest_note(client, "Hamoud (2026)\n.\nIEEE Access\n: 1\n.\n\ndoi\n:\n10.1109/X", title="Messy")
+    body = client.post("/query", json={"question": "Hamoud IEEE Access doi"}).json()
+    assert body["sources"][0]["snippet"] == "Hamoud (2026). IEEE Access: 1. doi: 10.1109/X"
+
+
 def test_delete_item(client):
     item = _ingest_note(client, "temporary note")
     assert client.delete(f"/items/{item['id']}").status_code == 204
@@ -113,3 +133,29 @@ def test_html_extraction_drops_page_chrome():
     assert "Real content here." in page.text
     assert "Home | About" not in page.text
     assert "var x" not in page.text
+
+
+def test_html_extraction_keeps_inline_text_on_one_line_and_drops_references():
+    html = """<html><body><main>
+    <h2>Overview</h2>
+    <p>RAG combines <a href="/wiki/Search">retrieval</a> with <i>generation</i><sup class="reference">[1]</sup>.
+       It was introduced in 2020.</p>
+    <ul><li>Step <b>one</b></li><li>Step two</li></ul>
+    <p>More body text so the references section sits in the last part of the page.</p>
+    <p>Even more body text, still part of the article content itself.</p>
+    <h2>References</h2>
+    <ol class="references"><li>Hamoud (2026). <cite>"Text Chunking Strategies"</cite>. doi:10.1109/X</li></ol>
+    </main></body></html>"""
+    text = extract_from_html(html).text
+
+    assert "RAG combines retrieval with generation. It was introduced in 2020." in text
+    assert "[1]" not in text
+    assert "Step one\nStep two" in text
+    assert "Overview\n\nRAG combines" in text
+    assert "Hamoud" not in text
+    assert "References" not in text
+
+
+def test_double_br_is_a_paragraph_break():
+    text = extract_from_html("<body><div>First para.<br><br>Second para.<br>same para</div></body>").text
+    assert text == "First para.\n\nSecond para.\nsame para"

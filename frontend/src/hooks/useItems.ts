@@ -68,5 +68,11 @@ export function useItems({ onItemSettled }: UseItemsOptions = {}) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  return { items, loading, error, refresh, addItem, removeItem };
+  const reindexItem = useCallback(async (id: string) => {
+    const updated = await inboxApi.reindexItem(id);
+    knownStatuses.current.set(id, updated.status); // so the "ready" toast fires when it finishes
+    setItems((prev) => prev.map((item) => (item.id === id ? updated : item)));
+  }, []);
+
+  return { items, loading, error, refresh, addItem, removeItem, reindexItem };
 }

@@ -25,7 +25,7 @@ export function AnswerText({ text, onCitationClick }: AnswerTextProps) {
           <button
             key={i}
             onClick={() => onCitationClick(index)}
-            className="mx-0.5 inline-flex h-[18px] min-w-[18px] -translate-y-px items-center justify-center rounded-md bg-violet-100 px-1 align-middle text-[11px] font-semibold text-violet-700 transition hover:bg-violet-600 hover:text-white"
+            className="mx-0.5 inline-flex h-[18px] min-w-[18px] -translate-y-px items-center justify-center rounded-md bg-emerald-100 px-1 align-middle text-[11px] font-semibold text-emerald-700 transition hover:bg-emerald-600 hover:text-white"
             title={`Jump to source ${index}`}
           >
             {index}
@@ -49,7 +49,7 @@ export function AnswerText({ text, onCitationClick }: AnswerTextProps) {
         const lines = block.split("\n").filter((l) => l.trim());
         if (lines.every((l) => LIST_LINE.test(l))) {
           return (
-            <ul key={i} className="list-disc space-y-1 pl-5 marker:text-violet-400">
+            <ul key={i} className="list-disc space-y-1 pl-5 marker:text-emerald-400">
               {lines.map((line, j) => (
                 <li key={j}>{renderInline(line.replace(LIST_LINE, ""))}</li>
               ))}

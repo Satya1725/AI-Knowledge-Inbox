@@ -11,9 +11,10 @@ interface ItemListProps {
   loading: boolean;
   error: string | null;
   onDelete: (id: string) => Promise<void>;
+  onReindex: (item: Item) => void;
 }
 
-export function ItemList({ items, loading, error, onDelete }: ItemListProps) {
+export function ItemList({ items, loading, error, onDelete, onReindex }: ItemListProps) {
   const [filter, setFilter] = useState("");
 
   const visibleItems = useMemo(() => {
@@ -55,15 +56,17 @@ export function ItemList({ items, loading, error, onDelete }: ItemListProps) {
       title="Library"
       subtitle={`${items.length} saved item${items.length === 1 ? "" : "s"}`}
       icon={<Library className="h-4 w-4" />}
+      className="lg:min-h-80 lg:flex-1"
+      bodyClassName="flex flex-col"
     >
       {items.length > 3 && (
-        <div className="relative mb-3">
+        <div className="relative mb-3 shrink-0">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filter by title or content"
-            className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-4 focus:ring-violet-100"
+            className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-100"
           />
         </div>
       )}
@@ -79,12 +82,13 @@ export function ItemList({ items, loading, error, onDelete }: ItemListProps) {
       ) : visibleItems.length === 0 ? (
         <p className="py-6 text-center text-sm text-slate-400">No items match “{filter}”.</p>
       ) : (
-        <ul className="scroll-thin -mr-2 max-h-130 space-y-2 overflow-y-auto pr-2">
+        <ul className="scroll-thin -mr-2 max-h-130 space-y-2 overflow-y-auto pr-2 lg:max-h-none lg:min-h-0 lg:flex-1">
           {visibleItems.map((item) => (
             <ItemCard
               key={item.id}
               item={item}
               onRequestDelete={requestDelete}
+              onReindex={onReindex}
               deleting={deleting && pendingDelete?.id === item.id}
             />
           ))}
